@@ -38,7 +38,7 @@ void main() {
     getrusage(RUSAGE_SELF, &r);
     end = r.ru_utime;
     long res = ((end.tv_sec - start.tv_sec) * 1000000L) + end.tv_usec - start.tv_usec;
-    printf( "Time elapsed in microseconds: %ld\n", res );
+    //printf( "Time elapsed in microseconds: %ld\n", res );
 
     fclose(pic_file);
     pic_file = fopen("./images/sp.bmp", "wb");

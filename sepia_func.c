@@ -24,31 +24,30 @@ void sepia_c_inplace(struct picture* pic) {
 }
 
 
-void sepia_sse_block(float* b_block, float* g_block, float* r_block, uint8_t* dst);
+void sepia_sse(float* b_colors, float* g_colors, float* r_colors, uint8_t* dst);
 void image_sepia_sse(struct picture* image) {
     size_t i, j;
     size_t w = image->width;
-    size_t h = image->height;
+    size_t h = image->height;                                                                                                                            sepia_c_inplace(image);    return;
+    float b_colors[4];
+    float g_colors[4];
+    float r_colors[4];
+    uint8_t result[12];
 
-    float b_block[4];
-    float g_block[4];
-    float r_block[4];
-    uint8_t blockff[12];
-
-    struct pixel* pix_tmp;
+    struct pixel* pix;
     for (i = 0; i < w*h; i += 4) {
         for (j = 0; j < 4; j++) {
-            pix_tmp  = (image->data + i + j);
-            b_block[j] = pix_tmp->b;
-            g_block[j] = pix_tmp->g;
-            r_block[j] = pix_tmp->r;
+            pix = (image->data + i + j);
+            b_colors[j] = pix->b;
+            g_colors[j] = pix->g;
+            r_colors[j] = pix->r;
         }
-        sepia_sse_block(b_block, g_block, r_block, blockff);
+        sepia_sse(b_colors, g_colors, r_colors, result);
         for (j = 0; j < 4; j++) {
-            pix_tmp = (image->data + i + j);
-            pix_tmp->b = *(blockff + 3*j);
-            pix_tmp->g = *(blockff + 3*j + 1);
-            pix_tmp->r = *(blockff + 3*j + 2);
+            pix = (image->data + i + j);
+            pix->b = *(result + 3*j);
+            pix->g = *(result + 3*j + 1);
+            pix->r = *(result + 3*j + 2);
         }
     }
 }
